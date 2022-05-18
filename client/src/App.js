@@ -1,32 +1,19 @@
 import React from "react";
-import logo from './logo.svg';
+import { Routes, Route, Link } from "react-router-dom";
 import './App.css';
+import Login from "./jsx/Login"
+import OwnSchedule from "./jsx/OwnSchedule";
 
 function App() {
-  const [data, setData] = React.useState(null);
 
-  React.useEffect(() => {
-    fetch('/api')
-    .then((res) => res.json())
-    .then((data) => setData(data.message));
-  }, []);
+  const user = false;
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          {!data ? "Loading..." : data}
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="App" >
+      <Routes>
+        <Route path="/" element={user ? <OwnSchedule /> : <Login />} />
+        <Route path="/ownSchedule" element={<OwnSchedule />} />
+      </Routes>
     </div>
   );
 }
