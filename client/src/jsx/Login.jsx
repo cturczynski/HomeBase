@@ -1,7 +1,6 @@
 import React from "react";
-import '../App.css';
+import '../css/App.css';
 import { useNavigate } from "react-router-dom";
-import OwnSchedule from "./OwnSchedule";
 
 function Login() {
     const navigate = useNavigate();
