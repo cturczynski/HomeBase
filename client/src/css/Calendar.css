@@ -1,0 +1,63 @@
+.date-changer {
+    width: 100%;
+    position: relative;
+}
+
+.button-container {
+    width: 25%;
+    float: right;
+    height: 40px;
+    display: table;
+    padding-top: 40px;
+}
+
+.date-changer-divs {
+    position: relative;
+    height: 100%;
+    /* background-color: aquamarine; */
+    display: table-cell;
+}
+
+.date-btn {
+    height: 100%;
+}
+
+.calendar-div {
+    width: 100%;
+}
+
+.calendar-grid {
+    width: 90%;
+    padding-top: 40px;
+    margin: auto;
+    display: table;
+    table-layout: fixed;
+}
+
+.day-div {
+    height: 100%;
+    display: table-cell;
+    border-color: black;
+    border-width: 2px;
+    border-style: solid;
+}
+
+.day-div + .day-div {
+    border-left: 0;
+}
+
+.data-text-row {
+    width: 100%;
+}
+
+.date-row {
+    background-color: lightblue;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-bottom-color: black;
+    text-align: left;
+    display: inline-block;
+    vertical-align: middle;
+    text-indent: 10px;
+}
+

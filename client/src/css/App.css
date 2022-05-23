@@ -2,16 +2,6 @@
   text-align: center;
 }
 
-.login {
-  text-align: center;
-  margin: 0;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  -ms-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
-}
-
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -23,11 +13,73 @@
   color: white;
 }
 
-.login-form {
+.header {
   width: 100%;
+  text-align: left;
 }
 
-.input-row {
+.header-h1 {
+  padding-left: 30px;
+}
+
+.home-text {
+  color: rgb(108, 205, 238);
+}
+
+.base-text {
+  color: rgb(242, 194, 104);
+}
+
+.menu-bar {
   width: 100%;
-  display: inline-block;
+  height: 40px;
+  padding-left: 20px;
+  /* box-shadow: 0px -2px 2px -2px black inset; */
+  border-bottom-color: black;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  z-index: 1;
+  /* background-color: bisque; */
+  position: relative;
+}
+
+.tab-container {
+  width: 75%;
+  height: 41px;
+  float: left;
+  /* background-color: aqua; */
+  display: table;
+  table-layout: fixed;
+  z-index: 2;
+}
+
+.tab-divs {
+  position: relative;
+  height: 100%;
+  background-color: white;
+  display: table-cell;
+  z-index: 3;
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+}
+
+.tab-divs + .tab-divs {
+  border-left: 0px;
+}
+
+.selected-tab-div {
+  border-bottom-width: 0px;
+}
+
+.tab-btn {
+  height: 100%;
+  width: 100%;
+  background-color: transparent;
+  border-width: 0px;
+  cursor: pointer;
+}
+
+.tab-btn:hover {
+  color: blue;
 }

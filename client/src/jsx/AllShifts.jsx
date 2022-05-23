@@ -1,11 +1,11 @@
 import React from "react";
 import '../css/App.css';
-import '../css/OwnSchedule.css';
+import '../css/AllShifts.css';
 import '../css/Calendar.css';
 import Header from './Header';
 import MenuBar from "./MenuBar";
 
-function OwnSchedule() {
+function AllShifts() {
 
   function Day(props) {
     return (
@@ -26,10 +26,14 @@ function OwnSchedule() {
       </div>);
   }
 
+  function Shift(props) {
+    
+  }
+
   return (
-    <div className="own-schedule">
+    <div className="all-shifts">
       <Header />
-      <MenuBar current={0} />
+      <MenuBar current={1} />
 
       <div className="date-changer">
         <div className="button-container">
@@ -55,4 +59,4 @@ function OwnSchedule() {
   );
 }
 
-export default OwnSchedule;
+export default AllShifts;

@@ -1,9 +1,10 @@
 import React from "react";
 import '../css/App.css';
+import '../css/Login.css';
 import { useNavigate } from "react-router-dom";
 
 function Login() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
 
