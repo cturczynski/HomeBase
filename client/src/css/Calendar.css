@@ -1,14 +1,24 @@
-.date-changer {
+.date-changer-div {
     width: 100%;
     position: relative;
+    overflow: hidden;
+}
+
+.date-tools {
+    width: 25%;
+    float: right;
+    position: relative;
+    padding-top: 10px;
+}
+
+.date-display {
+    width: 100%;
 }
 
 .button-container {
-    width: 25%;
-    float: right;
     height: 40px;
     display: table;
-    padding-top: 40px;
+    width: 100%;
 }
 
 .date-changer-divs {
@@ -28,10 +38,11 @@
 
 .calendar-grid {
     width: 90%;
-    padding-top: 40px;
+    padding-top: 20px;
     margin: auto;
     display: table;
     table-layout: fixed;
+    margin-bottom: 40px;
 }
 
 .day-div {

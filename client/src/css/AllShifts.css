@@ -1,0 +1,35 @@
+.edit-btn-div {
+    width: 100%;
+    padding-left: 5%;
+    overflow: hidden;
+}
+
+.edit-btn {
+    float: left;
+}
+
+.shift-div {
+    width: 100%;
+    height: auto;
+    border-bottom-style: solid;
+    border-bottom-color: gray;
+    border-bottom-width: 0.5px;
+}
+
+.emp-name {
+    margin-bottom: 15px;
+}
+
+.shift-times {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.shift-desc {
+    margin-top: 5px;
+}
+
+/* .shift-div p {
+    margin-top: 5px;
+    margin-bottom: 5px;
+} */
