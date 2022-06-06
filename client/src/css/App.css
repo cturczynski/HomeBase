@@ -41,11 +41,12 @@
   z-index: 1;
   /* background-color: bisque; */
   position: relative;
+  box-sizing: border-box;
 }
 
 .tab-container {
   width: 75%;
-  height: 41px;
+  height: 40px;
   float: left;
   /* background-color: aqua; */
   display: table;

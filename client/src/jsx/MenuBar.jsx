@@ -19,10 +19,10 @@ function MenuBar(props) {
             <button className="tab-btn" onClick={() => navigate('/allShifts')} >All Shifts</button>
           </div>
           <div className={props.current === 2 ? selectedTab : otherTab}>
-            <button className="tab-btn">Manage Team</button>
+            <button className="tab-btn" onClick={() => navigate('/manageTeam')}>Manage Team</button>
           </div>
           <div className={props.current === 3 ? selectedTab : otherTab}>
-            <button className="tab-btn">Manage Schedule</button>
+            <button className="tab-btn" onClick={() => navigate('/manageSchedule')}>Manage Schedule</button>
           </div>
         </div>
       </div>
