@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/cturczynski/HomeBase#readme",
   "dependencies": {
-    "express": "^4.18.1"
+    "express": "^4.18.1",
+    "mysql2": "^2.3.3"
   }
 }

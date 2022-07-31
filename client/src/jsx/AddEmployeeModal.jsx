@@ -29,7 +29,7 @@ function AddEmployeeModal(props) {
                   <input type='text' onChange={() => {}} />
               </label><br />
               <RadioGroup value={false} row onChange={() => {}}>
-                  <FormControlLabel value={true} control={<Radio />} label="Yes" onChange={}/>
+                  <FormControlLabel value={true} control={<Radio />} label="Yes" onChange={() => {}}/>
                   <FormControlLabel value={false} control={<Radio />} label="No" />
               </RadioGroup>
               <label>
