@@ -1,4 +1,5 @@
 const {executeAndLogQuery, appendSqlClause} = require('./queryService');
+const db = require('./db');
 
 async function getAllShifts() {
     const queryString = 'SELECT * FROM shift';
@@ -6,7 +7,7 @@ async function getAllShifts() {
     return executeAndLogQuery(queryString, tag);
 }
 
-async function buildAndSendQuery(id, employee, date, start, end) {
+async function buildAndSendSelectQuery(id, employee, date, start, end) {
     var queryString = `SELECT * FROM shift`;
     var tag = 'getShifts';
 
@@ -38,7 +39,18 @@ async function buildAndSendQuery(id, employee, date, start, end) {
     return executeAndLogQuery(queryString, tag);
 }
 
+async function buildAndSendUpdateQuery(shift) {
+    let id = shift.id;
+    delete shift.id;
+    var params = [shift, id];
+    let sql = "UPDATE shift SET ? WHERE id=?";
+    let tag = "updateShift";
+
+    return executeAndLogQuery(sql, params, tag);
+}
+
 module.exports = { 
     getAllShifts,
-    buildAndSendQuery
+    buildAndSendSelectQuery,
+    buildAndSendUpdateQuery
 };

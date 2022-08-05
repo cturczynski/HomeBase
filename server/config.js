@@ -4,7 +4,7 @@ const config = {
         user: "sql5506497",
         password: "6XtjX8jbDw",
         database: "sql5506497",
-        timezone: "utc",
+        timezone: "Z",
     },
     listPerPage: 50,
 };

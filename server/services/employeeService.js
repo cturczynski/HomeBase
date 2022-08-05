@@ -1,12 +1,13 @@
 const {executeAndLogQuery, appendSqlClause} = require('./queryService');
+const db = require('./db');
 
 async function getAllEmployees() {
     const queryString = 'SELECT * FROM employee';
     const tag = 'getAllEmployees';
-    return executeAndLogQuery(queryString, tag);
+    return executeAndLogQuery(queryString, null, tag);
 }
 
-async function buildAndSendQuery(id, username) {
+async function buildAndSendSelectQuery(id, username) {
     var queryString = `SELECT * FROM employee`;
     var tag = 'getEmployees';
 
@@ -20,10 +21,21 @@ async function buildAndSendQuery(id, username) {
         tag = tag.concat('ByUsername');
     }
 
-    return executeAndLogQuery(queryString, tag);
+    return executeAndLogQuery(queryString, null, tag);
+}
+
+async function buildAndSendUpdateQuery(employee) {
+    let id = employee.id;
+    delete employee.id;
+    var params = [employee, id];
+    let sql = "UPDATE employee SET ? WHERE id=?";
+    let tag = "updateEmployee";
+
+    return executeAndLogQuery(sql, params, tag);
 }
 
 module.exports = { 
     getAllEmployees,
-    buildAndSendQuery
+    buildAndSendSelectQuery,
+    buildAndSendUpdateQuery
 };
