@@ -52,7 +52,7 @@ async function getColumnNames(tableName) {
     }
 }
 
-async function sanitizeUpdateObject(obj, tableName) {
+async function sanitizeDbObject(obj, tableName) {
     let columnNames = await getColumnNames(tableName);
     console.log(`Retrieved column names for table ${tableName}: ${columnNames}`);
     if (columnNames.length === 0 || columnNames.error !== undefined) {
@@ -82,6 +82,6 @@ module.exports = {
     getValueOrNull,
     appendSqlClause,
     getColumnNames,
-    sanitizeUpdateObject,
+    sanitizeDbObject,
     cleanUpdateResult
 };

@@ -5,6 +5,7 @@ const config = {
         password: "6XtjX8jbDw",
         database: "sql5506497",
         timezone: "Z",
+        connectionLimit: 5,
     },
     listPerPage: 50,
 };

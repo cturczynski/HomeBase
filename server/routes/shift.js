@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const shiftService = require('../services/shiftService');
-const { getValueOrNull, sanitizeUpdateObject, cleanUpdateResult } = require('../services/queryService');
+const { getValueOrNull, sanitizeDbObject, cleanUpdateResult } = require('../services/queryService');
 
 
 router.get('/', async function(req, res, next) {
@@ -34,10 +34,10 @@ router.get('/all', async function(req, res, next) {
     }
 });
 
-router.post('/', async function(req, res, next) {
+router.post('/update', async function(req, res, next) {
     console.log(req.body);
     try {
-        let cleanedBody = await sanitizeUpdateObject(req.body, "shift");
+        let cleanedBody = await sanitizeDbObject(req.body, "shift");
         if (cleanedBody.error !== undefined) {
             res.json(cleanedBody);
         } else {
@@ -47,6 +47,24 @@ router.post('/', async function(req, res, next) {
         }
     } catch (err) {
         console.error('Error while updating shift ', err.message);
+        res.json({"error" : err.message});
+        next(err);
+    }
+});
+
+router.post('/create', async function(req, res, next) {
+    console.log(req.body);
+    try {
+        let cleanedBody = await sanitizeDbObject(req.body, "shift");
+        if (cleanedBody.error !== undefined) {
+            res.json(cleanedBody);
+        } else {
+            let insertResult = await shiftService.buildAndSendInsertQuery(cleanedBody);
+            let jsonResponse = cleanUpdateResult(insertResult);
+            res.json(jsonResponse);
+        }
+    } catch (err) {
+        console.error('Error while inserting shift ', err.message);
         res.json({"error" : err.message});
         next(err);
     }

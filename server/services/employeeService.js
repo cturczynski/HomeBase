@@ -34,8 +34,17 @@ async function buildAndSendUpdateQuery(employee) {
     return executeAndLogQuery(sql, params, tag);
 }
 
+async function buildAndSendInsertQuery(employee) {
+    delete employee.id;
+    let sql = "INSERT into employee SET ?";
+    let tag = "insertEmployee";
+
+    return executeAndLogQuery(sql, employee, tag);
+}
+
 module.exports = { 
     getAllEmployees,
     buildAndSendSelectQuery,
-    buildAndSendUpdateQuery
+    buildAndSendUpdateQuery,
+    buildAndSendInsertQuery
 };

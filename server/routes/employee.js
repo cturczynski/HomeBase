@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const employeeService = require('../services/employeeService');
-const { getValueOrNull, sanitizeUpdateObject, cleanUpdateResult } = require('../services/queryService');
+const { getValueOrNull, sanitizeDbObject, cleanUpdateResult } = require('../services/queryService');
 
 router.get('/', async function(req, res, next) {
     const id = getValueOrNull(req.query.id);
@@ -30,10 +30,10 @@ router.get('/all', async function(req, res, next) {
     }
 });
 
-router.post('/', async function(req, res, next) {
+router.post('/update', async function(req, res, next) {
     console.log(req.body);
     try {
-        let cleanedBody = await sanitizeUpdateObject(req.body, "employee");
+        let cleanedBody = await sanitizeDbObject(req.body, "employee");
         if (cleanedBody.error !== undefined) {
             res.json(cleanedBody);
         } else {
@@ -43,6 +43,24 @@ router.post('/', async function(req, res, next) {
         }
     } catch (err) {
         console.error('Error while updating employee ', err.message);
+        res.json({"error" : err.message});
+        next(err);
+    }
+});
+
+router.post('/create', async function(req, res, next) {
+    console.log(req.body);
+    try {
+        let cleanedBody = await sanitizeDbObject(req.body, "employee");
+        if (cleanedBody.error !== undefined) {
+            res.json(cleanedBody);
+        } else {
+            let updateResult = await employeeService.buildAndSendInsertQuery(cleanedBody);
+            let jsonResponse = cleanUpdateResult(updateResult);
+            res.json(jsonResponse);
+        }
+    } catch (err) {
+        console.error('Error while inserting employee ', err.message);
         res.json({"error" : err.message});
         next(err);
     }

@@ -49,8 +49,17 @@ async function buildAndSendUpdateQuery(shift) {
     return executeAndLogQuery(sql, params, tag);
 }
 
+async function buildAndSendInsertQuery(shift) {
+    delete shift.id;
+    let sql = "INSERT into shift SET ?";
+    let tag = "insertShift";
+
+    return executeAndLogQuery(sql, shift, tag);
+}
+
 module.exports = { 
     getAllShifts,
     buildAndSendSelectQuery,
-    buildAndSendUpdateQuery
+    buildAndSendUpdateQuery,
+    buildAndSendInsertQuery
 };
