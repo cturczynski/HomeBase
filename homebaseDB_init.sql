@@ -3,24 +3,29 @@ create table `employee` (
 `name` VARCHAR(255) NOT NULL,
 `phone` VARCHAR(255),
 `email` VARCHAR(255) NOT NULL,
+`username` VARCHAR(20) NOT NULL,
 `password` VARCHAR(255),
-`managerFlag` BOOLEAN,
+`manager_flag` BOOLEAN,
+`profile_image_string` VARCHAR(5000),
+`start_date` DATE,
 PRIMARY KEY (`id`),
-UNIQUE (`email`)
+UNIQUE (`email`),
+UNIQUE (`username`)
 );
-ALTER TABLE `shift` change `in` `clock_in` BOOLEAN;
-INSERT into employee(`name`, `phone`, `email`, `manager_flag`) VALUES 
-('Casey', '8479998738', 'casey@homebase.com', false),
-('Dom', '3829182938', 'dom@homebase.com', true),
-('Daniel', '3948238495', 'daniel@homebase.com', true),
-('Rachel', '0283748593', 'rachel@homebase.com', false),
-('Sam', '2817263574', 'same@homebase.com', false),
-('Chas', '8182937465', 'chas@homebase.com', false),
-('Maci', '9192837462', 'maci@homebase.com', false),
-('Kaley', '9192837465', 'kaley@homebase.com', false),
-('Chloe', '0392861723', 'chloe@homebase.com', false),
-('Jason', '4758392038', 'jason@homebase.com', false);
+
+INSERT into employee(`name`, `phone`, `email`, `username`, `manager_flag`) VALUES 
+('Casey', '8479998738', 'casey@homebase.com', 'casey', false),
+('Dom', '3829182938', 'dom@homebase.com', 'dom', true),
+('Daniel', '3948238495', 'daniel@homebase.com', 'daniel', true),
+('Rachael', '0283748593', 'rachael@homebase.com', 'rachael', false),
+('Sam', '2817263574', 'sam@homebase.com', 'sam', false),
+('Chas', '8182937465', 'chas@homebase.com', 'chas', false),
+('Maci', '9192837462', 'maci@homebase.com', 'maci', false),
+('Kaley', '9192837465', 'kaley@homebase.com', 'kaley', false),
+('Chloe', '0392861723', 'chloe@homebase.com', 'chloe', false),
+('Jason', '4758392038', 'jason@homebase.com', 'jason', false);
 select * from shift;
+SHOW columns from employee;
 
 ALTER TABLE employee add column username VARCHAR(20) after email;
 
@@ -31,15 +36,16 @@ create table `shift` (
 `position` VARCHAR(255) NOT NULL,
 `start` DATETIME NOT NULL,
 `end` DATETIME NOT NULL,
-`in` DATETIME,
-`out` DATETIME,
+`clock_in` DATETIME,
+`clock_out` DATETIME,
 `tips` Double,
 `total_tips` DOUBLE,
 PRIMARY KEY (`id`),
-foreign key (`employee_id`) references employee(id),
-foreign key (`date`) references `day`(`date`)
+foreign key (`employee_id`) references employee(id)
+-- foreign key (`date`) references `day`(`date`)
 );
 ALTER TABLE `shift` change `out` `clock_out` DATETIME;
+alter table shift drop foreign key shift_ibfk_2;
 
 INSERT INTO shift(`date`, `employee_id`, `position`, `start`, `end`, `total_tips`) VALUES
 ('2022-07-06', 1, 'BARTENDER', '2022-07-06 10:00:00', '2022-07-06 16:00:00', 2000.0),
@@ -90,3 +96,4 @@ INSERT INTO `day`(`date`, `total_tips`) VALUES
 ('2022-07-11', 1800.0),
 ('2022-07-12', 1900.0);
 select * from day;
+drop table `day`;
