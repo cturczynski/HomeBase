@@ -4,7 +4,7 @@ const db = require('./db');
 async function getAllShifts() {
     const queryString = 'SELECT * FROM shift';
     const tag = 'getAllShifts';
-    return executeAndLogQuery(queryString, tag);
+    return executeAndLogQuery(queryString, null, tag);
 }
 
 async function buildAndSendSelectQuery(id, employee, date, start, end) {
@@ -36,13 +36,14 @@ async function buildAndSendSelectQuery(id, employee, date, start, end) {
         tag = tag.concat('ByEndRange');
     }
 
-    return executeAndLogQuery(queryString, tag);
+    return executeAndLogQuery(queryString, null, tag);
 }
 
 async function buildAndSendUpdateQuery(shift) {
-    let id = shift.id;
-    delete shift.id;
-    var params = [shift, id];
+    var shiftClone = Object.assign({}, shift);
+    let id = shiftClone.id;
+    delete shiftClone.id;
+    var params = [shiftClone, id];
     let sql = "UPDATE shift SET ? WHERE id=?";
     let tag = "updateShift";
 
@@ -50,11 +51,12 @@ async function buildAndSendUpdateQuery(shift) {
 }
 
 async function buildAndSendInsertQuery(shift) {
-    delete shift.id;
+    var shiftClone = Object.assign({}, shift);
+    delete shiftClone.id;
     let sql = "INSERT into shift SET ?";
     let tag = "insertShift";
 
-    return executeAndLogQuery(sql, shift, tag);
+    return executeAndLogQuery(sql, shiftClone, tag);
 }
 
 module.exports = { 

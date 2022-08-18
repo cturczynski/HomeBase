@@ -25,9 +25,10 @@ async function buildAndSendSelectQuery(id, username) {
 }
 
 async function buildAndSendUpdateQuery(employee) {
-    let id = employee.id;
-    delete employee.id;
-    var params = [employee, id];
+    var empClone = Object.assign({}, employee);
+    let id = empClone.id;
+    delete empClone.id;
+    var params = [empClone, id];
     let sql = "UPDATE employee SET ? WHERE id=?";
     let tag = "updateEmployee";
 
@@ -35,11 +36,12 @@ async function buildAndSendUpdateQuery(employee) {
 }
 
 async function buildAndSendInsertQuery(employee) {
-    delete employee.id;
+    var empClone = Object.assign({}, employee);
+    delete empClone.id;
     let sql = "INSERT into employee SET ?";
     let tag = "insertEmployee";
 
-    return executeAndLogQuery(sql, employee, tag);
+    return executeAndLogQuery(sql, empClone, tag);
 }
 
 module.exports = { 
