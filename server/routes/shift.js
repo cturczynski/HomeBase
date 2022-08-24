@@ -13,7 +13,7 @@ router.get('/', async function(req, res, next) {
 
     try {
         let shifts = await shiftService.buildAndSendSelectQuery(id, employee, date, start, end);
-        let responseJson = cleanShiftObjects(shifts);
+        let responseJson = await cleanShiftObjects(shifts);
         res.json(responseJson);
     } catch (err) {
         console.error('Error while getting shifts ', err.message);
@@ -25,7 +25,7 @@ router.get('/', async function(req, res, next) {
 router.get('/all', async function(req, res, next) {
     try {
         let shifts = await shiftService.getAllShifts();
-        let responseJson = cleanShiftObjects(shifts);
+        let responseJson = await cleanShiftObjects(shifts);
         res.json(responseJson);
     } catch (err) {
         console.error('Error while getting all shifts ', err.message);
@@ -93,12 +93,36 @@ router.post('/setTips', async function(req, res, next) {
     }
 })
 
-function cleanShiftObjects(shifts) {
+async function cleanShiftObjects(shifts) {
     if (shifts === undefined || shifts.error !== undefined) {
         return shifts;
     } else {
-        return {"shifts" : shifts};
+        let cleanShifts = await clockOutOldShifts(shifts);
+        return {"shifts" : cleanShifts};
     }
+}
+
+async function clockOutOldShifts(shifts) {
+    var shiftsToUpdate = [];
+    shifts.forEach(shift => {
+        if (getValueOrNull(shift["clock_in"]) !== null && getValueOrNull(shift["clock_out"]) === null) {
+            let shiftDate = new Date(shift.date);
+            let cutOffDate = new Date(shift.date);
+            cutOffDate.setDate((shiftDate.getDate() + 1));
+            cutOffDate.setUTCHours(4,00,00,000);
+            if (new Date() > cutOffDate) {
+                shift["clock_out"] = cutOffDate.toISOString();
+                shiftsToUpdate.push(shift);
+            }
+        }
+    })
+    
+    await Promise.all(shiftsToUpdate.map( async (shift) => {
+        let updateResult = await updateShiftToDb(shift, "clock_out");
+        console.log(updateResult);
+    }));
+
+    return shifts
 }
 
 function calculateShiftTime(shift) {
@@ -110,9 +134,9 @@ function calculateShiftTime(shift) {
     return Math.abs(outTimeDate - inTimeDate) / (3600 * 1000);
 }
 
-async function updateTipsToDb(shift) {
+async function updateShiftToDb(shift, property) {
     let updateResult = await shiftService.buildAndSendUpdateQuery(shift);
-    console.log(`Updated tips for shift with id ? with result ?`, [shift.id, updateResult]);
+    console.log(`Updated ${property} for shift with id ? with result ?`, [shift.id, updateResult]);
     return updateResult;
 }
 
@@ -132,7 +156,7 @@ async function addTipsAndSaveToDb(shifts, totalTips) {
     await Promise.all(filledShifts.map( async (shift) => {
         shift["total_tips"] = totalTips;
         shift["tips"] = ((shiftHourDict[shift.id] / totalHours) * totalTips).toFixed(2);
-        let updateResult = await updateTipsToDb(shift);
+        let updateResult = await updateShiftToDb(shift, "tips");
         shiftUpdateStatus[shift.id.toString()] = updateResult;
     }));
 
