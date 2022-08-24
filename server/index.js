@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require('path');
 const employeeRouter = require("./routes/employee");
 const shiftRouter = require("./routes/shift");
 
@@ -9,6 +10,9 @@ app.use(express.json());
 app.use(express.urlencoded({
     extended: true,
 }));
+
+// Have Node serve the files for our built React app
+app.use(express.static(path.resolve(__dirname, '../client/build')));
 
 app.get('/', (req, res) => {
     res.json({ message: "Hello, Casey. Keep working"});
