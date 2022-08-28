@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const shiftService = require('../services/shiftService');
+const employeeService = require('../services/employeeService');
 const { getValueOrNull, sanitizeDbObject, cleanUpdateResult } = require('../services/queryService');
 
 
@@ -93,6 +94,98 @@ router.post('/setTips', async function(req, res, next) {
     }
 })
 
+router.get('/setData', async function(req, res, next) {
+    const date = getValueOrNull(req.query.date) === null ? new Date() : getValueOrNull(req.query.date);
+
+    try {
+        //make array of 7 days prior (loop)
+        let dates = [];
+        for (var i = 6; i >= 0; i--) {
+            let nextDate = new Date(date);
+            nextDate.setDate(nextDate.getDate() - i);
+            dates.push(nextDate);
+        }
+        console.log(dates);
+        //make manager and bartender/barback array (get all employees call)
+        let allEmps = await employeeService.getAllEmployees();
+        let managers = allEmps.filter(emp => { return emp["manager_flag"] });
+        let workers = allEmps.filter(emp => { return !emp["manager_flag"]; });
+
+        let shiftsToMake = [];
+        //for each day, randomly select from arrays 2 managers, 2 barbacks, 2 bartenders (3 for all for weekends)
+        //1 of each for AM shift (10a - 5p), 2 for PM shift (5p - 12a)
+        dates.forEach(day => {
+            let managersArr = [...managers];
+            let workersArr = [...workers];
+            let staffQuota = (day.getDay() === 6 || day.getDay() === 5) ? 3 : 2;
+            for (var i = 0; i < staffQuota; i++) {
+                let amFlag = (i === 0);
+                shiftsToMake.push(makeShiftWithRandomMember(managersArr, day, "MANAGER", amFlag));
+                shiftsToMake.push(makeShiftWithRandomMember(workersArr, day, "BARTENDER", amFlag));
+                shiftsToMake.push(makeShiftWithRandomMember(workersArr, day, "BARBACK", amFlag));
+            }
+        })
+
+        //create all these shifts
+        await Promise.all(shiftsToMake.map(async (shift) => {
+            let insertResult = await shiftService.buildAndSendInsertQuery(shift);
+            console.log(insertResult);
+        }));
+
+        //create range of tips (2000 - 4000)  Math.random() * (max - min) + min
+        //for each date, set tips with randomly selected total tips from range (Promise.all)
+        let returnStatusDict = {};
+        await Promise.all(dates.map(async (day) => {
+            let totalTips = (Math.random() * (3000 - 1000) + 1000).toFixed(2);
+            let dateString = day.toISOString().split('T')[0];
+            let retrievedShifts = await shiftService.buildAndSendSelectQuery(null, null, `'${dateString}'`, null, null);
+            if (retrievedShifts.error === undefined) {
+                let shiftUpdateStatus = await addTipsAndSaveToDb(retrievedShifts, totalTips);
+                returnStatusDict[dateString] = shiftUpdateStatus
+            } else {
+                console.error('Error while retrieving new shifts: ', retrievedShifts);
+                returnStatusDict[dateString] = retrievedShifts;
+            }
+        }));
+
+        res.json(returnStatusDict);
+    } catch (err) {
+        console.error('Error while setting data ', err.message);
+        res.json({"error" : err.message});
+        next(err);
+    }
+})
+
+function makeShiftWithRandomMember(empArray, date, position, amFlag) {
+    let randomIndex = Math.floor(Math.random() * empArray.length);
+    let employee = empArray[randomIndex];
+    empArray.splice(randomIndex, 1);
+    let start = new Date(date);
+    let end  = new Date(date);
+    if (amFlag) {
+        start.setUTCHours(10,00,00,000);
+        end.setUTCHours(17,00,00,000);
+    } else {
+        start.setUTCHours(17,00,00,000);
+        end.setDate(end.getDate() + 1);
+        end.setUTCHours(0,00,00,000);
+    }
+    let shift = {
+        "id": 0,
+        "date": date,
+        "employee_id": employee.id,
+        "position": position,
+        "start": start,
+        "end": end,
+        "clock_in": start,
+        "clock_out": end,
+        "tips": null,
+        "total_tips": null
+    };
+
+    return shift;
+}
+
 async function cleanShiftObjects(shifts) {
     if (shifts === undefined || shifts.error !== undefined) {
         return shifts;
@@ -148,9 +241,12 @@ async function addTipsAndSaveToDb(shifts, totalTips) {
     var shiftUpdateStatus = {};
 
     filledShifts.forEach(shift => {
-        let shiftHours = calculateShiftTime(shift);
-        shiftHourDict[shift.id] = shiftHours;
-        totalHours += shiftHours;
+        if (shift["position"] !== "MANAGER") {
+            let tipPoolMultiplier = shift["position"] === "BARTENDER" ? 0.75 : 0.25;
+            let shiftHours = calculateShiftTime(shift) * tipPoolMultiplier;
+            shiftHourDict[shift.id] = shiftHours;
+            totalHours += shiftHours;
+        }
     });
 
     await Promise.all(filledShifts.map( async (shift) => {
