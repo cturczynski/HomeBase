@@ -96,11 +96,12 @@ router.post('/setTips', async function(req, res, next) {
 
 router.get('/setData', async function(req, res, next) {
     const date = getValueOrNull(req.query.date) === null ? new Date() : getValueOrNull(req.query.date);
+    const daysBack = getValueOrNull(req.query.daysBack) === null ? 6 : getValueOrNull(req.query.daysBack);
 
     try {
         //make array of 7 days prior (loop)
         let dates = [];
-        for (var i = 6; i >= 0; i--) {
+        for (var i = daysBack; i >= 0; i--) {
             let nextDate = new Date(date);
             nextDate.setDate(nextDate.getDate() - i);
             dates.push(nextDate);
@@ -132,11 +133,11 @@ router.get('/setData', async function(req, res, next) {
             console.log(insertResult);
         }));
 
-        //create range of tips (2000 - 4000)  Math.random() * (max - min) + min
+        //create range of tips (1000 - 2000)  Math.random() * (max - min) + min
         //for each date, set tips with randomly selected total tips from range (Promise.all)
         let returnStatusDict = {};
         await Promise.all(dates.map(async (day) => {
-            let totalTips = (Math.random() * (3000 - 1000) + 1000).toFixed(2);
+            let totalTips = (Math.random() * (2000 - 1000) + 1000).toFixed(2);
             let dateString = day.toISOString().split('T')[0];
             let retrievedShifts = await shiftService.buildAndSendSelectQuery(null, null, `'${dateString}'`, null, null);
             if (retrievedShifts.error === undefined) {
